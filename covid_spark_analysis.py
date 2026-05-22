@@ -38,10 +38,10 @@ top_15_cases_percent = (
     .where(col("total_cases").isNotNull())
     .select(
         col("iso_code"),
-        col("location").alias("country"),
-        spark_round((col("total_cases") / col("population")) * 100, 2).alias("cases_percent"),
+        col("location").alias("страна"),
+        spark_round((col("total_cases") / col("population")) * 100, 2).alias("процент переболевших"),
     )
-    .orderBy(desc("cases_percent"), col("country"))
+    .orderBy(desc("процент переболевших"), col("страна"))
     .limit(15)
 )
 
@@ -54,11 +54,11 @@ top_10_new_cases = (
     .withColumn("row_number", row_number().over(country_new_cases_window))
     .where(col("row_number") == 1)
     .select(
-        date_format(col("date"), "yyyy-MM-dd").alias("date"),
-        col("location").alias("country"),
-        col("new_cases").cast("long").alias("new_cases"),
+        date_format(col("date"), "yyyy-MM-dd").alias("число"),
+        col("location").alias("страна"),
+        col("new_cases").cast("long").alias("кол-во новых случаев"),
     )
-    .orderBy(desc("new_cases"), col("country"), col("date"))
+    .orderBy(desc("кол-во новых случаев"), col("страна"), col("число"))
     .limit(10)
 )
 
@@ -76,12 +76,12 @@ russia_cases_delta = (
     .withColumn("new_cases_yesterday", lag(col("new_cases_today")).over(russia_window))
     .where(col("date") >= "2021-03-25")
     .select(
-        date_format(col("date"), "yyyy-MM-dd").alias("date"),
-        col("new_cases_yesterday"),
-        col("new_cases_today"),
+        date_format(col("date"), "yyyy-MM-dd").alias("число"),
+        col("new_cases_yesterday").alias("кол-во новых случаев вчера"),
+        col("new_cases_today").alias("кол-во новых случаев сегодня"),
         (col("new_cases_today") - col("new_cases_yesterday")).alias("delta"),
     )
-    .orderBy(col("date"))
+    .orderBy(col("число"))
 )
 
 print("Top 15 countries by total cases percent on 2021-03-31")
