@@ -9,4 +9,8 @@ if [[ -n "${JAVA_HOME:-}" ]]; then
   export PATH="$JAVA_HOME/bin:$PATH"
 fi
 
+if [[ -x "../Apache_spark/.venv/bin/spark-submit" ]]; then
+  export PATH="../Apache_spark/.venv/bin:$PATH"
+fi
+
 spark-submit --conf "spark.ui.showConsoleProgress=false" covid_spark_analysis.py
