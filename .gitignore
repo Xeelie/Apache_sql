@@ -1,0 +1,5 @@
+covid-data.csv
+result_*/
+*.crc
+_SUCCESS
+.DS_Store
